@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Golf Battle 清空數值</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+
+    <style>
+        html, body, h1, h2, h3, h4, h5 { font-family: "Raleway", sans-serif }
+        body {
+            background-image: url('a.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        h2 {
+            font-size: 3em; /* 放大文本 */
+            margin-bottom: 20px;
+        }
+        .w3-button {
+            font-size: 1.5em; /* 放大按鈕 */
+            padding: 20px 40px; /* 增加按鈕內邊距 */
+        }
+    </style>
+</head>
+<body class="w3-light-grey">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <div class="container">
+        <h2>清空 Firebase 數值</h2>
+        <button class="w3-button w3-red" onclick="resetFirebaseData()">重置數值</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGgflHh0DERJB8y5XgsXBZvfJJ9_BtNvI",
+            authDomain: "contact-16943.firebaseapp.com",
+            databaseURL: "https://contact-16943-default-rtdb.firebaseio.com",
+            projectId: "contact-16943",
+            storageBucket: "contact-16943.appspot.com",
+            messagingSenderId: "862113235081",
+            appId: "1:862113235081:web:0fd5f8cb1dd717f674c658"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function resetFirebaseData() {
+            if (confirm("確定要重置所有數值嗎？")) {
+                // 設置數值
+                database.ref("DetectionSituation").set("無");
+                database.ref("color").set("無");
+                database.ref("outnum").set(0);
+                database.ref("ballsFired").set(0);
+                database.ref("result1").set(0);
+                database.ref("acceleration").set(0);
+                database.ref("integral").set(0);
+
+                alert("數值已重置！");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>chu ching cheng</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	 
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+body{
+
+ 
+    background-repeat: no-repeat;
+  background-attachment: fixed;  
+  background-size: cover;
+   
+	}
+#outnum, #ballsFired ,#result1 ,#acceleration {
+    margin: 20px 10px; /* 上下间距20px，左右间距0 */
+    font-weight: bold;
+	font-size: 100px; /* 增大字体大小 */
+	 text-align: left; /* 左对齐文本 */
+
+	 }
+.w3-quarter	 {
+    width: 50%;
+   height: 60%;
+
+}
+#image-container{
+
+}
+#image-container img {
+    width: 100%; /* 设置图像的最大宽度 */
+    height: 0%; /* 设置图像的最大高度 */
+    
+	
+}
+h4{
+font-size: 65px; /* 增大字体大小 */
+}
+
+#image-text-container {
+       vertical-align:text-top;
+   
+}
+
+</style>
+</head>
+<body class="w3-light-grey" >
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+
+
+
+
+
+
+<div id="image-container">
+            <div id="image-text-container">
+                <h2>正在顯示圖片...</h2>
+                <img src="your-image.jpg" alt="Your Image">
+            </div>
+        </div>
+  
+  
+
+
+
+  
+
+</div>
+
+<script>
+// Get the Sidebar
+var mySidebar = document.getElementById("mySidebar");
+
+// Get the DIV with overlay effect
+var overlayBg = document.getElementById("myOverlay");
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function w3_open() {
+  if (mySidebar.style.display === 'block') {
+    mySidebar.style.display = 'none';
+    overlayBg.style.display = "none";
+  } else {
+    mySidebar.style.display = 'block';
+    overlayBg.style.display = "block";
+  }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+  mySidebar.style.display = "none";
+  overlayBg.style.display = "none";
+}
+</script>
+
+
+ <script>
+              const firebaseConfig = {
+                apiKey: "AIzaSyDGgflHh0DERJB8y5XgsXBZvfJJ9_BtNvI",
+            authDomain: "contact-16943.firebaseapp.com",
+            databaseURL: "https://contact-16943-default-rtdb.firebaseio.com",
+            projectId: "contact-16943",
+            storageBucket: "contact-16943.appspot.com",
+            messagingSenderId: "862113235081",
+            appId: "1:862113235081:web:0fd5f8cb1dd717f674c658"
+};
+
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        var storage = firebase.storage();
+        // 获取 Firebase 实时数据库引用
+        const database = firebase.database();
+
+        // 获取元素
+        const outnumElement = document.getElementById("outnum");
+        const ballsFiredElement = document.getElementById("ballsFired");
+        const imageContainer = document.getElementById("image-container");
+		const resultElement = document.getElementById("result1");
+		const accelerationElement = document.getElementById("acceleration");
+        // 监听 Firebase 数据变化
+        const outnumRef = database.ref("outnum");
+        outnumRef.on("value", (snapshot) => {
+            const outnum = snapshot.val();
+            outnumElement.textContent = outnum;
+        });
+
+        const accuracyScoreRef = database.ref("ballsFired");
+        accuracyScoreRef.on("value", (snapshot) => {
+            const ballsFired = snapshot.val();
+			
+            loadAndDisplayImages();
+           
+				 
+        });
+
+
+
+   const  resultElementRef = database.ref("result1");
+         resultElementRef.on("value", (snapshot) => {
+            const result1 = snapshot.val();
+            resultElement.textContent = result1;
+        });
+
+  const  accelerationElementRef = database.ref("acceleration");
+         accelerationElementRef.on("value", (snapshot) => {
+            const acceleration = snapshot.val();
+            accelerationElement.textContent = acceleration;
+        });
+
+        // 定义一个函数来加载并显示所有图像
+        function loadAndDisplayImages() {
+            // 清空图像容器
+            imageContainer.innerHTML = "";
+
+            // 引用存储桶中的图像目录
+            var storageRef = storage.ref("images2");
+
+            // 列出存储桶中的所有文件
+            storageRef.listAll().then(function(result) {
+                result.items.forEach(function(item) {
+                    // 获取每个文件的下载URL
+                    item.getDownloadURL().then(function(url) {
+                        // 创建图像元素并将其添加到图像容器中
+                        var imageElement = document.createElement("img");
+                        imageElement.src = url;
+                        imageContainer.appendChild(imageElement);
+                    }).catch(function(error) {
+                        console.error("无法获取下载URL:", error);
+                    });
+                });
+            }).catch(function(error) {
+                console.error("无法列出文件:", error);
+            });
+        }
+
+
+       
+	   
+	   
+	   
+
+    </script>
+	
+</body>
+</html>
