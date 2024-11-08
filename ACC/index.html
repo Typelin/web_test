@@ -1,0 +1,387 @@
+<!DOCTYPE HTML>
+<!--
+	Strata by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+  <title>Golf battle 繪製加速度</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <style>
+    #nameInput {
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      width: 100%;
+    }
+
+    #dataDisplay {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    #dataDisplay th {
+      background-color: #007BFF;
+      /* 标题行的背景颜色 */
+      color: #fff;
+      /* 标题行的文本颜色 */
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    #dataDisplay td {
+      background-color: #f9f9f9;
+      /* 单元格的背景颜色 */
+      color: #333;
+      /* 单元格的文本颜色 */
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 10em;
+      /* 标题字体大小 */
+      color: #FF0000;
+      /* 标题颜色 */
+      text-align: center;
+      /* 居中对齐标题 */
+      background: linear-gradient(135deg, #FF0000, #00BFFF);
+      /* 渐变背景 */
+      background-clip: text;
+      /* 仅在文字部分应用背景 */
+      -webkit-background-clip: text;
+      /* 适用于WebKit浏览器 */
+      color: transparent;
+      /* 隐藏文字颜色 */
+      padding: 10px;
+      /* 内边距，增加标题周围的空间 */
+    }
+	h2 {
+      font-size: 8em;
+      /* 标题字体大小 */
+      color: #FF0000;
+      /* 标题颜色 */
+      text-align: center;
+}
+
+
+    #userDataRows {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    #userDataRows th {
+      background-color: #007BFF;
+      /* 标题行的背景颜色 */
+      color: #fff;
+      /* 标题行的文本颜色 */
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    #userDataRows td {
+      background-color: #f9f9f9;
+      /* 单元格的背景颜色 */
+      color: #333;
+      /* 单元格的文本颜色 */
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    #mode {
+      color: red;
+      font-weight: bold;
+    }
+	
+	.button-container {
+	 font-size: 2.5em;
+    text-align: center;
+    margin-top: 50px; /* Adjust the margin as needed */
+	font-size: 65px;
+	
+  }
+  button{
+  width:100px;
+
+  height:60px;
+
+}
+  </style>
+</head>
+
+<body class="is-preload">
+
+  <!-- Header -->
+  <header id="header">
+    <div class="inner">
+
+    </div>
+  </header>
+
+  <!-- Main -->
+  <div id="main">
+    <h1>Golf Battle</h1> <!-- 新标题 -->
+    <h2 >加速度開關</h2>
+	
+<div class="button-container">
+    <button   type="button" id="retrieveDataButton"  class="button" onclick="updateMode2(1)">開始</button>
+	<br>
+	<br>
+	<button  type="button" id="retrieveDataButton"  class="button" onclick="updateMode2(0)">結束</button>
+</div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGgflHh0DERJB8y5XgsXBZvfJJ9_BtNvI",
+  authDomain: "contact-16943.firebaseapp.com",
+  databaseURL: "https://contact-16943-default-rtdb.firebaseio.com",
+  projectId: "contact-16943",
+  storageBucket: "contact-16943.appspot.com",
+  messagingSenderId: "862113235081",
+  appId: "1:862113235081:web:2bd144798ed762d474c658",
+  measurementId: "G-7ZM6Z2CNTV"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    document.getElementById("retrieveDataButton").addEventListener("click", function () {
+      var database = firebase.database();
+      var ref = database.ref("test");
+	 
+      ref.once("value")
+        .then(function (snapshot) {
+          var testData = snapshot.val();
+          var dataDisplay = document.getElementById("dataDisplay");
+
+          // 清空表格内容，保留表头
+          while (dataDisplay.rows.length > 1) {
+            dataDisplay.deleteRow(1);
+          }
+
+          // 遍历"test"节点下的所有数据并填充表格
+          for (var key in testData) {
+            if (testData.hasOwnProperty(key)) {
+              var precision = testData[key].precision;
+              var cl = testData[key].cl; // cl 是字符串
+              var time = testData[key].time; // cl 是字符串
+              var Standard = testData[key].Standard; // cl 是字符串
+              var row = dataDisplay.insertRow(dataDisplay.rows.length);
+              var nameCell = row.insertCell(0);
+              var precisionCell = row.insertCell(1);
+              var Standards = row.insertCell(2);
+              var clCell = row.insertCell(3);
+              var time1 = row.insertCell(4);
+              nameCell.textContent = key;
+              precisionCell.textContent = precision;
+              clCell.textContent = cl;
+              time1.textContent = time;
+              Standards.textContent = Standard;
+            }
+          }
+        })
+        .catch(function (error) {
+          console.error("获取数据失败: " + error);
+        });
+    });
+
+    // 获取对数据库的引用
+    var database = firebase.database();
+    var namesRef = database.ref("names");
+
+    // 获取页面元素
+    var nameInput = document.getElementById("nameInput");
+    var saveButton = document.getElementById("saveButton");
+    var savedNames = document.getElementById("savedNames");
+    // 添加按钮点击事件处理程序
+    saveButton.addEventListener("click", function () {
+      var name = nameInput.value;
+      if (name.trim() !== "") {
+        // 覆盖先前的名字
+        namesRef.set({
+          name: name
+        });
+        // 清空输入框
+        nameInput.value = "";
+      }
+    });
+
+
+
+
+
+
+    function updateMode() {
+      var mode = document.getElementById('mode').value;
+      firebase.database().ref('model').set(mode);
+    }
+	 function updateMode2(mode) {
+ 
+      firebase.database().ref('9-axis').set(mode);
+    }
+	
+  </script>
+
+  <script>
+  var a;
+    // 获取对数据库的引用
+    var database = firebase.database();
+    var usersRef = database.ref("test");
+	 var out = database.ref("outnum");
+    // 获取页面元素
+    var userNameInput = document.getElementById("userNameInput");
+    var viewHistoryButton = document.getElementById("viewHistoryButton");
+    var userDataRows = document.getElementById("userDataRows");
+
+    document.getElementById("viewHistoryButton").addEventListener("click", function () {
+      var database = firebase.database();
+      var userName = userNameInput.value;
+      var ref = database.ref("test/" + userName);
+
+      ref.once("value")
+        .then(function (snapshot) {
+          var testData = snapshot.val();
+          var dataDisplay = document.getElementById("userDataRows");
+
+          // 清空表格内容，保留表头
+          while (dataDisplay.rows.length > 1) {
+            dataDisplay.deleteRow(1);
+          }
+          var row = dataDisplay.insertRow(dataDisplay.rows.length);
+          var nameCell = row.insertCell(0);
+          var precisionCell = row.insertCell(1);
+          var Standards = row.insertCell(2);
+          var clCell = row.insertCell(3);
+          var time1 = row.insertCell(4);
+
+          nameCell.textContent = userName;
+          precisionCell.textContent = testData.precision;
+          clCell.textContent = testData.cl;
+          time1.textContent = testData.time;
+          Standards.textContent = testData.Standard;
+       
+        })
+        .catch(function (error) {
+          console.error("获取数据失败: " + error);
+        });
+    });
+  </script>
+
+
+
+  <script>
+    var outnumRef = database.ref("ballsFired");
+
+    // 定義一個 Chart.js 圖表
+    var myChart = new Chart(document.getElementById("myChart"), {
+      type: 'line',
+      data: {
+        labels: [], // x 軸標籤
+        datasets: [{
+          label: '準度', // 數據集的標籤
+          data: [], // 數據集的數據
+          fill: false, // 是否填充面積
+          borderColor: 'rgb(75, 192, 192)', // 線條顏色
+          tension: 0.1 // 曲線張力
+        }]
+      },
+      options: {
+        responsive: true, // 是否自適應大小
+        plugins: {
+          title: {
+            display: true,
+            text: '實時數據' // 圖表標題
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: '時間' // x 軸標題
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: '準度' // y 軸標題
+            }
+          }
+        }
+      }
+    });
+
+    // 監聽 Firebase 數據庫中的數據變化
+    outnumRef
+      .on('value', function (snapshot) {
+        var data = snapshot.val(); // 獲取數據庫中的數據
+
+        // 更新圖表上的數據
+        myChart.data.labels.push(new Date().toLocaleTimeString()); // 將時間加入 x 軸標籤
+        myChart.data.datasets[0].data.push(data); // 將數據加入數據集中
+        myChart.update(); // 更新圖表
+		
+		
+      });
+
+
+
+    var ref = database.ref("names/name");
+    var initialData;
+
+    ref.on("value", function (snapshot) {
+      var currentData = snapshot.val();
+
+      if (initialData === undefined) {
+        initialData = currentData;
+      } else if (initialData !== currentData) {
+        document.location.reload();
+        outnumRef.set(0);
+		out.set(0);
+		 a=0;
+
+      }
+    });
+
+
+
+  </script>
+  </div>
+
+
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery.poptrox.min.js"></script>
+  <script src="assets/js/browser.min.js"></script>
+  <script src="assets/js/breakpoints.min.js"></script>
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/main.js"></script>
+  <!-- 引入 Chart.js -->
+
+
+</body>
+
+</html>
