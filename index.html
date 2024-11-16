@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Battle 主菜單</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .container h1 {
+            margin-bottom: 20px;
+        }
+        .time-container {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            width: 350px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Golf Battle 主菜單</h1>
+
+        <!-- 顯示當前時間 -->
+        <div class="time-container" id="time"></div>
+
+        <div class="btn-container">
+            <button onclick="window.location.href='goifw3-2.html'">遊戲模式</button>
+            <button onclick="window.location.href='goifw3.html'">練習模式</button>
+            <button onclick="window.location.href='Clean.html'">清除當前雲端數據</button>
+            <button onclick="window.location.href='9img.html'">顯示加速度取線</button>
+            <button onclick="window.location.href='ACC/index.html'">加速度開關</button>
+            <button onclick="window.location.href='SERVER/index.html'">玩家歷史查詢</button>
+        </div>
+    </div>
+
+    <script>
+        // 更新時間
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const period = hours >= 0 && hours < 6 ? '凌晨' : hours < 12 ? '上午' : '下午';
+            const formattedTime = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${hours % 12 || 12}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${period}`;
+            document.getElementById('time').textContent = `當前時間：${formattedTime}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime(); // 初次執行
+
+        // 設置背景圖片目錄與隨機選取邏輯
+        const imageDirectory = [
+            'a.jpg',
+
+        ]; // 你的背景圖片文件目錄
+
+        // 隨機選擇一張圖片作為背景
+        const randomImage = imageDirectory[Math.floor(Math.random() * imageDirectory.length)];
+        document.body.style.backgroundImage = `url('${randomImage}')`;
+    </script>
+</body>
+</html>
