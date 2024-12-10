@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Golf Battle 練習模式</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	 
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+body{
+
+ background-image: url('a.jpg');
+    background-repeat: no-repeat;
+  background-attachment: fixed;  
+  background-size: cover;
+   
+	}
+#DetectionSituation,#outnum, #ballsFired ,#result1 ,#acceleration {
+    margin: 20px 10px; /* 上下间距20px，左右间距0 */
+    font-weight: bold;
+	font-size: 100px; /* 增大字体大小 */
+	 text-align: left; /* 左对齐文本 */
+
+	 }
+.w3-quarter	 {
+    width: 50%;
+   height: 60%;
+
+}
+#image-container{
+ text-align: center;
+}
+#image-container img {
+    width: 40%; /* 设置图像的最大宽度 */
+    max-height: 20%; /* 设置图像的最大高度 */
+    border: 1px solid white; /* 固定2像素宽的白色边框 */
+	 margin: 0 auto;
+	  text-align: center;
+}
+h4{
+font-size: 65px; /* 增大字体大小 */
+}
+
+#image-text-container {
+    text-align: center;
+	
+   
+}
+
+</style>
+</head>
+<body class="w3-light-grey" >
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  
+
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-red w3-padding-16">
+        <div class="w3-left"><i class="fa fa-search w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <span id="result1">Loading...</span>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>精度(三次)</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <div class="w3-left"><i class="fa fa-eye w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <span id="ballsFired">Loading...</span>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>準度 &emsp; cm</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-teal w3-padding-16">
+        <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <span id="outnum">Loading...</span>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>出球數</h4>
+      </div>
+    </div>
+   
+    <div class="w3-quarter">
+        <div class="w3-container w3-teal w3-padding-16">
+          <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
+          <div class="w3-right">
+            <span id="DetectionSituation">Loading...</span>
+          </div>
+          <div class="w3-clear"></div>
+          <h4>辯識狀態</h4>
+        </div>
+      </div>
+	
+	 
+
+  </div>
+  </div>
+
+
+<div id="image-container">
+            <div id="image-text-container">
+                <h2>这是您的图片</h2>
+                <img src="your-image.jpg" alt="Your Image">
+            </div>
+        </div>
+  
+  
+
+
+
+  
+
+</div>
+
+<script>
+// Get the Sidebar
+var mySidebar = document.getElementById("mySidebar");
+
+// Get the DIV with overlay effect
+var overlayBg = document.getElementById("myOverlay");
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function w3_open() {
+  if (mySidebar.style.display === 'block') {
+    mySidebar.style.display = 'none';
+    overlayBg.style.display = "none";
+  } else {
+    mySidebar.style.display = 'block';
+    overlayBg.style.display = "block";
+  }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+  mySidebar.style.display = "none";
+  overlayBg.style.display = "none";
+}
+</script>
+
+
+ <script>
+              const firebaseConfig = {
+                apiKey: "AIzaSyDGgflHh0DERJB8y5XgsXBZvfJJ9_BtNvI",
+            authDomain: "contact-16943.firebaseapp.com",
+            databaseURL: "https://contact-16943-default-rtdb.firebaseio.com",
+            projectId: "contact-16943",
+            storageBucket: "contact-16943.appspot.com",
+            messagingSenderId: "862113235081",
+            appId: "1:862113235081:web:0fd5f8cb1dd717f674c658"
+};
+
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        var storage = firebase.storage();
+        // 获取 Firebase 实时数据库引用
+        const database = firebase.database();
+
+        // 获取元素
+        const outnumElement = document.getElementById("outnum");
+        const ballsFiredElement = document.getElementById("ballsFired");
+        const imageContainer = document.getElementById("image-container");
+		const resultElement = document.getElementById("result1");
+		
+		const accelerationElement = document.getElementById("acceleration");
+		const DetectionSituationElement = document.getElementById("DetectionSituation");
+        // 监听 Firebase 数据变化
+		
+		  const DetectionSituationRef = database.ref("DetectionSituation");
+        DetectionSituationRef.on("value", (snapshot) => {
+            const DetectionSituation = snapshot.val();
+            DetectionSituationElement.textContent = DetectionSituation;
+        });
+        const outnumRef = database.ref("outnum");
+        outnumRef.on("value", (snapshot) => {
+            const outnum = snapshot.val();
+            outnumElement.textContent = outnum;
+        });
+
+        const accuracyScoreRef = database.ref("ballsFired");
+        accuracyScoreRef.on("value", (snapshot) => {
+            const ballsFired = snapshot.val();
+			
+            ballsFiredElement.textContent = ballsFired;
+            loadAndDisplayImages();
+				 
+        });
+
+
+
+   const  resultElementRef = database.ref("result1");
+         resultElementRef.on("value", (snapshot) => {
+            const result1 = snapshot.val();
+            resultElement.textContent = result1;
+        });
+
+  const  accelerationElementRef = database.ref("acceleration");
+         accelerationElementRef.on("value", (snapshot) => {
+            const acceleration = snapshot.val();
+            accelerationElement.textContent = acceleration;
+        });
+		
+
+        // 定义一个函数来加载并显示所有图像
+        function loadAndDisplayImages() {
+            // 清空图像容器
+            imageContainer.innerHTML = "";
+
+            // 引用存储桶中的图像目录
+            var storageRef = storage.ref("images");
+
+            // 列出存储桶中的所有文件
+            storageRef.listAll().then(function(result) {
+                result.items.forEach(function(item) {
+                    // 获取每个文件的下载URL
+                    item.getDownloadURL().then(function(url) {
+                        // 创建图像元素并将其添加到图像容器中
+                        var imageElement = document.createElement("img");
+                        imageElement.src = url;
+                        imageContainer.appendChild(imageElement);
+                    }).catch(function(error) {
+                        console.error("无法获取下载URL:", error);
+                    });
+                });
+            }).catch(function(error) {
+                console.error("无法列出文件:", error);
+            });
+        }
+
+
+       
+    </script>
+	
+</body>
+</html>

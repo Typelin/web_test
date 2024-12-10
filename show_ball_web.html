@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>顯示高爾夫球圖片</title>
+
+    <!-- Firebase 和 CSS 連接 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+        #image-container img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+<div id="image-container"></div>
+
+<script>
+// Firebase 配置
+const firebaseConfig = {
+    apiKey: "AIzaSyDGgflHh0DERJB8y5XgsXBZvfJJ9_BtNvI",
+    authDomain: "contact-16943.firebaseapp.com",
+    databaseURL: "https://contact-16943-default-rtdb.firebaseio.com",
+    projectId: "contact-16943",
+    storageBucket: "contact-16943.appspot.com",
+    messagingSenderId: "862113235081",
+    appId: "1:862113235081:web:0fd5f8cb1dd717f674c658"
+};
+
+// 初始化 Firebase
+firebase.initializeApp(firebaseConfig);
+var storage = firebase.storage();
+
+// 獲取圖像容器
+const imageContainer = document.getElementById("image-container");
+
+// 定義函數來加載並顯示圖像
+function loadAndDisplayImages() {
+    // 清空圖像容器
+    imageContainer.innerHTML = "";
+
+    // 引用 Firebase Storage 中的圖片目錄
+    var storageRef = storage.ref("images");
+
+    // 列出所有存儲在 "images" 目錄中的文件
+    storageRef.listAll().then(function(result) {
+        result.items.forEach(function(item) {
+            // 獲取每個文件的下載 URL
+            item.getDownloadURL().then(function(url) {
+                // 創建圖像元素並將其添加到容器中
+                var imageElement = document.createElement("img");
+                imageElement.src = url;
+                imageContainer.appendChild(imageElement);
+            }).catch(function(error) {
+                console.error("無法獲取下載 URL:", error);
+            });
+        });
+    }).catch(function(error) {
+        console.error("無法列出文件:", error);
+    });
+}
+
+// 載入並顯示圖像
+loadAndDisplayImages();
+
+</script>
+
+</body>
+</html>
